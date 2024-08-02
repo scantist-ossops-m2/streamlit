@@ -12,8 +12,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:src && yarn build:vendor && yarn build:assets && yarn build:proto && yarn build:lib-dev",
-    "build:prod": "yarn build:src && yarn build:vendor && yarn build:assets && yarn build:proto && yarn build:lib-type-prod",
+    "preinstall": "npx only-allow pnpm",
+    "build": "pnpm run build:src && pnpm run build:vendor && pnpm run build:assets && pnpm run build:proto && pnpm run build:lib-dev",
+    "build:prod": "pnpm run build:src && pnpm run build:vendor && pnpm run build:assets && pnpm run build:proto && pnpm run build:lib-type-prod",
     "build:lib-type-prod": "tsc -p ./tsconfig.prod.json && tsc-alias -p ./tsconfig.prod.json",
     "build:lib-dev": "tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
     "build:src": "env NODE_ENV=development vite build",
@@ -148,7 +149,7 @@
     "eslint-plugin-streamlit-custom": "file:../eslint-plugin-streamlit-custom",
     "jest-fetch-mock": "^3.0.3",
     "node-fetch": "2.6.7",
-    "protobufjs-cli": "^1.1.0",
+    "protobufjs-cli": "^1.1.2",
     "timezone-mock": "^1.3.6",
     "tsc-alias": "^1.8.5",
     "vitest": "^2.0.5",

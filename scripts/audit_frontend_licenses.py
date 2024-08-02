@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """Audit the licenses of all our frontend dependencies (as defined by our
-`yarn.lock` file). If any dependency has an unacceptable license, print it
+`pnpm.lock` file). If any dependency has an unacceptable license, print it
 out and exit with an error code. If all dependencies have acceptable licenses,
 exit normally.
 """
@@ -67,7 +67,7 @@ ACCEPTABLE_LICENSES = {
     "Apache*",  # https://github.com/saikocat/colorbrewer/blob/master/LICENSE.txt
 }
 
-# Some of our dependencies have licenses that yarn fails to parse, but that
+# Some of our dependencies have licenses that pnpm fails to parse, but that
 # are still acceptable. This set contains all those exceptions. Each entry
 # should include a comment about why it's an exception.
 PACKAGE_EXCEPTIONS: Set[PackageInfo] = {
@@ -134,7 +134,7 @@ def get_license_type(package: PackageInfo) -> str:
 
 
 def check_licenses(licenses) -> NoReturn:
-    # `yarn licenses` outputs a bunch of lines.
+    # `pnpm licenses` outputs a bunch of lines.
     # The last line contains the JSON object we care about
     licenses_json = json.loads(licenses[len(licenses) - 1])
     assert licenses_json["type"] == "table"
@@ -159,7 +159,7 @@ def check_licenses(licenses) -> NoReturn:
         for package in packages
         if (get_license_type(package) not in ACCEPTABLE_LICENSES)
         and (package not in PACKAGE_EXCEPTIONS)
-        # workspace aggregator is yarn workspaces
+        # workspace aggregator is yarn workspaces TODO(pnpm)
         and "workspace-aggregator" not in package[0]
     ]
 
@@ -174,20 +174,34 @@ def check_licenses(licenses) -> NoReturn:
 
 
 def main() -> NoReturn:
-    # Run `yarn licenses` for lib.
+    # Run `pnpm licenses` for lib.
     licenses_output = (
         subprocess.check_output(
-            ["yarn", "licenses", "list", "--json", "--production", "--ignore-platform"],
+            [
+                "pnpm",
+                "licenses",
+                "list",
+                "--json",
+                "--production",
+                "--ignore-platform",
+            ],
             cwd=str(FRONTEND_DIR_LIB),
         )
         .decode()
         .splitlines()
     )
 
-    # Run `yarn licenses` for app.
+    # Run `pnpm run licenses` for app.
     licenses_output = licenses_output + (
         subprocess.check_output(
-            ["yarn", "licenses", "list", "--json", "--production", "--ignore-platform"],
+            [
+                "pnpm",
+                "licenses",
+                "list",
+                "--json",
+                "--production",
+                "--ignore-platform",
+            ],
             cwd=str(FRONTEND_DIR_APP),
         )
         .decode()
