@@ -301,7 +301,7 @@ export interface RenderedMarkdownProps {
 }
 
 export type CustomCodeTagProps = JSX.IntrinsicElements["code"] &
-  ReactMarkdownProps & { inline?: boolean; isMarkdown?: boolean }
+  ReactMarkdownProps & { inline?: boolean }
 
 /**
  * Renders code tag with highlighting based on requested language.
@@ -309,7 +309,6 @@ export type CustomCodeTagProps = JSX.IntrinsicElements["code"] &
 export const CustomCodeTag: FunctionComponent<
   React.PropsWithChildren<CustomCodeTagProps>
 > = ({ inline, className, children, ...props }) => {
-  console.log("IN CUSTOM CODE TAG", children)
   const match = /language-(\w+)/.exec(className || "")
   const codeText = String(children).trim().replace(/\n$/, "")
 
