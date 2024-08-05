@@ -43,7 +43,7 @@ import remarkGfm from "remark-gfm"
 import { findAndReplace } from "mdast-util-find-and-replace"
 import xxhash from "xxhashjs"
 
-import CodeBlock from "@streamlit/lib/src/components/elements/CodeBlock"
+import StreamlitSyntaxHighlighter from "@streamlit/lib/src/components/elements/CodeBlock/StreamlitSyntaxHighlighter"
 import IsDialogContext from "@streamlit/lib/src/components/core/IsDialogContext"
 import IsSidebarContext from "@streamlit/lib/src/components/core/IsSidebarContext"
 import ErrorBoundary from "@streamlit/lib/src/components/shared/ErrorBoundary"
@@ -53,12 +53,12 @@ import {
   getMarkdownTextColors,
 } from "@streamlit/lib/src/theme"
 import { LibContext } from "@streamlit/lib/src/components/core/LibContext"
-import StreamlitSyntaxHighlighter from "@streamlit/lib/src/components/elements/CodeBlock/StreamlitSyntaxHighlighter"
 
 import {
   StyledHeadingActionElements,
   StyledHeadingWithActionElements,
   StyledLinkIcon,
+  StyledPreWrapper,
   StyledStreamlitMarkdown,
 } from "./styled-components"
 
@@ -301,7 +301,7 @@ export interface RenderedMarkdownProps {
 }
 
 export type CustomCodeTagProps = JSX.IntrinsicElements["code"] &
-  ReactMarkdownProps & { inline?: boolean }
+  ReactMarkdownProps & { inline?: boolean; isMarkdown?: boolean }
 
 /**
  * Renders code tag with highlighting based on requested language.
@@ -309,6 +309,7 @@ export type CustomCodeTagProps = JSX.IntrinsicElements["code"] &
 export const CustomCodeTag: FunctionComponent<
   React.PropsWithChildren<CustomCodeTagProps>
 > = ({ inline, className, children, ...props }) => {
+  console.log("IN CUSTOM CODE TAG", children)
   const match = /language-(\w+)/.exec(className || "")
   const codeText = String(children).trim().replace(/\n$/, "")
 
@@ -324,6 +325,14 @@ export const CustomCodeTag: FunctionComponent<
   )
 }
 
+const CustomPreTag: FunctionComponent<
+  React.PropsWithChildren<ReactMarkdownProps>
+> = ({ children }) => {
+  return (
+    <StyledPreWrapper data-testid="stMarkdownPre">{children}</StyledPreWrapper>
+  )
+}
+
 export function RenderedMarkdown({
   allowHTML,
   source,
@@ -332,7 +341,7 @@ export function RenderedMarkdown({
   disableLinks,
 }: Readonly<RenderedMarkdownProps>): ReactElement {
   const renderers: Components = {
-    pre: CodeBlock,
+    pre: CustomPreTag,
     code: CustomCodeTag,
     a: LinkWithTargetBlank,
     h1: CustomHeading,
